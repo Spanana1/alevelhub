@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -2818,23 +2818,7 @@ function showExplainModal(questionText, correctAnswer, chosenAnswer, qid){
       }
     } catch(e2) {}
 
-    const apiKey = typeof getGeminiKey === 'function' ? getGeminiKey() : '';
-    if(!apiKey) {
-      const el = document.getElementById('explain-content');
-      if(!el) return;
-      el.innerHTML = `
-        <div style="background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:12px 14px;margin-bottom:10px">
-          <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px">📖 Explanation</div>
-          <div style="color:var(--text);font-size:13px;line-height:1.75">${builtIn || correctAnswer}</div>
-        </div>
-        <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:10px 12px;font-size:12px;color:#86efac;margin-top:8px">
-          ✅ <strong>Correct answer:</strong> ${correctAnswer}
-        </div>
-        <div style="margin-top:10px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.25);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--text2)">
-          💡 Add your Gemini API key for deeper AI explanations.
-        </div>`;
-      return;
-    }
+    // AI proxy handles authentication server-side — no key check needed
 
     try {
       const subject = S.subject || S.tutorSubject || 'bio';
@@ -2954,26 +2938,14 @@ function buildHome(){
   ${PROG.badges.length<BADGE_DEFS.length?`<div style="text-align:center;margin-top:4px;font-size:11px;color:var(--text4)">${PROG.badges.length}/${BADGE_DEFS.length} badges earned · keep studying to unlock more!</div>`:"<div style='text-align:center;margin-top:4px;font-size:13px;color:var(--amber)'>🏆 All badges earned! Incredible work!</div>"}
   <button class="btn btn-s" data-a="reset-progress" style="margin-top:12px;font-size:11px;opacity:0.4;display:block;margin-left:auto;margin-right:auto">Reset progress</button>
 
-  ${(()=>{
-    const hasKey = getGeminiKey().startsWith('AIza');
-    const label = hasKey ? '✅ AI Tutor &amp; Marking — Active' : '⚠️ AI Features Disabled';
-    const labelColor = hasKey ? '#22c55e' : '#f59e0b';
-    const desc = hasKey
-      ? 'Gemini AI key saved · Written marking, AI Tutor, MCQ explanations &amp; Exam Predictor all working'
-      : 'Add a free Gemini API key to unlock: AI marking, AI Tutor, exam predictor &amp; more';
-    const btnLabel = hasKey ? '🔑 Change Key' : '✨ Set up FREE AI';
-    const btnStyle = hasKey
-      ? 'background:var(--bg3);border:1px solid var(--border2);color:var(--text2)'
-      : 'background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:none;color:#fff';
-    return '<div style="background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(139,92,246,0.08));border:1px solid rgba(59,130,246,0.25);border-radius:var(--r2);padding:16px 18px;margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
-      + '<div style="font-size:28px;flex-shrink:0">🤖</div>'
-      + '<div style="flex:1;min-width:180px">'
-      + '<div style="font-size:13px;font-weight:700;color:' + labelColor + ';margin-bottom:3px">' + label + '</div>'
-      + '<div style="font-size:11px;color:var(--text2);line-height:1.5">' + desc + '</div>'
-      + '</div>'
-      + '<button onclick="showAPIKeyPrompt()" style="flex-shrink:0;' + btnStyle + ';border-radius:10px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)">' + btnLabel + '</button>'
-      + '</div>';
-  })()}
+
+  <div style="background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(59,130,246,0.08));border:1px solid rgba(34,197,94,0.25);border-radius:var(--r2);padding:16px 18px;margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <div style="font-size:28px;flex-shrink:0">🤖</div>
+    <div style="flex:1;min-width:180px">
+      <div style="font-size:13px;font-weight:700;color:#22c55e;margin-bottom:3px">✅ AI Tutor &amp; Marking — Active</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.5">Gemini AI powered · Written marking, AI Tutor, MCQ explanations &amp; Exam Predictor all working</div>
+    </div>
+  </div>
 
   <div class="home-footer">AI-powered marking · Full spec coverage · Progress tracking · Bronze → Silver → Gold → Platinum</div>
 
