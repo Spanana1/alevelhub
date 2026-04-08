@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -2502,6 +2502,68 @@ const GAME_DATA = {
    {word:"DEFRAGMENTATION",hint:"Reorganising fragmented disk storage"},
    {word:"BANDWIDTH",hint:"Maximum data transfer rate of a network"},
    {word:"PSEUDOCODE",hint:"Structured English-like notation for algorithms"},
+  ],
+ },
+ chem:{
+  matchPairs:[
+   {term:"Hess's Law",def:"Enthalpy change is independent of route taken"},
+   {term:"Le Chatelier's Principle",def:"System opposes changes to restore equilibrium"},
+   {term:"Bronsted-Lowry acid",def:"Proton (H⁺) donor"},
+   {term:"Nucleophile",def:"Electron-pair donor that attacks δ+ carbon"},
+   {term:"Electrophile",def:"Electron-pair acceptor"},
+   {term:"Empirical formula",def:"Simplest whole-number ratio of atoms in a compound"},
+   {term:"Avogadro constant",def:"6.02 × 10²³ particles per mole"},
+   {term:"SN1 reaction",def:"Two-step substitution via carbocation intermediate"},
+   {term:"SN2 reaction",def:"One-step substitution with backside attack"},
+   {term:"Activation energy",def:"Minimum energy needed for a reaction to occur"},
+   {term:"Homolytic fission",def:"Each atom gets one electron from the bond"},
+   {term:"Heterolytic fission",def:"One atom gets both electrons from the bond"},
+   {term:"Oxidation state",def:"Hypothetical charge if compound were fully ionic"},
+   {term:"Buffer solution",def:"Resists changes in pH on addition of acid or base"},
+   {term:"Ksp",def:"Solubility product — equilibrium constant for dissolution"},
+   {term:"Enthalpy of neutralisation",def:"Heat released when 1 mol H₂O formed from acid-base reaction"},
+   {term:"Born-Haber cycle",def:"Energy cycle used to calculate lattice enthalpy"},
+   {term:"Arrhenius equation",def:"k = Ae^(-Ea/RT) — links rate constant to temperature"},
+  ],
+  fillBlanks:[
+   {sentence:"The number of moles = mass ÷ ___.",answer:"molar mass"},
+   {sentence:"In a redox reaction, oxidation involves ___ of electrons.",answer:"loss"},
+   {sentence:"HCl is a ___ acid (strong/weak).",answer:"strong"},
+   {sentence:"The equilibrium constant Kc only changes with ___.",answer:"temperature"},
+   {sentence:"Alkenes contain a carbon-carbon ___ bond.",answer:"double"},
+   {sentence:"The functional group of alcohols is ___.",answer:"-OH"},
+   {sentence:"___ distillation separates liquids with different boiling points.",answer:"fractional"},
+   {sentence:"pH = -log[___].",answer:"H+"},
+   {sentence:"The process of making a more concentrated acid safer by adding water is called ___.",answer:"dilution"},
+   {sentence:"Isomers have the same ___ formula but different structures.",answer:"molecular"},
+   {sentence:"In electrolysis, oxidation occurs at the ___.",answer:"anode"},
+   {sentence:"A catalyst works by providing an alternative pathway with lower ___.",answer:"activation energy"},
+  ],
+  trueFalse:[
+   {statement:"An increase in temperature always shifts equilibrium to the right.",answer:false,explanation:"Temperature shifts equilibrium in the endothermic direction. If the forward reaction is exothermic, increasing temperature shifts it LEFT."},
+   {statement:"A strong acid is completely dissociated in aqueous solution.",answer:true,explanation:"Strong acids (HCl, H₂SO₄, HNO₃) fully dissociate. Weak acids only partially dissociate."},
+   {statement:"Increasing pressure always increases reaction rate.",answer:true,explanation:"Higher pressure increases concentration of gas molecules, so collision frequency increases, raising reaction rate."},
+   {statement:"Adding a catalyst changes the equilibrium position.",answer:false,explanation:"A catalyst speeds up both forward and reverse reactions equally — it doesn't shift equilibrium, only how fast it's reached."},
+   {statement:"Oxidation is the gain of electrons.",answer:false,explanation:"Oxidation is LOSS of electrons (OIL). Reduction is GAIN of electrons (RIG). Remember OILRIG."},
+   {statement:"An empirical formula shows the simplest ratio of atoms.",answer:true,explanation:"The empirical formula is the simplest whole-number ratio, e.g. CH₂O for glucose (C₆H₁₂O₆)."},
+   {statement:"Exothermic reactions always have a negative ΔH.",answer:true,explanation:"In exothermic reactions, products are at lower energy than reactants — energy is released — so ΔH is negative."},
+   {statement:"The rate constant k increases as temperature decreases.",answer:false,explanation:"From the Arrhenius equation, k increases with temperature. More molecules exceed activation energy at higher temperatures."},
+   {statement:"A buffer solution prevents any change in pH.",answer:false,explanation:"A buffer RESISTS changes in pH but does not prevent them entirely. Adding large amounts of acid or base will eventually overwhelm the buffer."},
+   {statement:"Electronegativity increases across a period.",answer:true,explanation:"Nuclear charge increases across a period while shielding stays roughly constant, so atoms attract bonding electrons more strongly — electronegativity increases."},
+  ],
+  scrambleWords:[
+   {word:"EQUILIBRIUM",hint:"State where forward and reverse rates are equal"},
+   {word:"CATALYST",hint:"Speeds up reaction without being consumed"},
+   {word:"ELECTROLYSIS",hint:"Using electricity to drive a non-spontaneous reaction"},
+   {word:"OXIDATION",hint:"Loss of electrons"},
+   {word:"ISOMERS",hint:"Same formula, different structure"},
+   {word:"ENTHALPY",hint:"Heat energy at constant pressure (ΔH)"},
+   {word:"TITRATION",hint:"Technique to find unknown concentration"},
+   {word:"NUCLEOPHILE",hint:"Electron-pair donor"},
+   {word:"HYDROCARBON",hint:"Compound containing only carbon and hydrogen"},
+   {word:"EMPIRICAL",hint:"Simplest ratio formula"},
+   {word:"REVERSIBLE",hint:"Reaction that can go both ways"},
+   {word:"EXOTHERMIC",hint:"Reaction that releases heat energy"},
   ],
  },
 };
@@ -5255,9 +5317,6 @@ function setGeminiKey(k){ try{ localStorage.setItem('gemini_api_key', k.trim());
 let _workingModel = null;
 
 async function callAI(systemPrompt, messages, maxTokens=1000, onChunk=null){
-  const GEMINI_KEY = getGeminiKey();
-  if(!GEMINI_KEY){ showAPIKeyPrompt(); throw new Error('NO_KEY'); }
-
   // Build Gemini contents array (user/model alternating)
   const contents = [];
   const fullMessages = systemPrompt
@@ -5281,14 +5340,11 @@ async function callAI(systemPrompt, messages, maxTokens=1000, onChunk=null){
     ? [_workingModel, 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest', 'gemini-1.5-pro-latest']
     : ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest', 'gemini-1.5-pro-latest'];
 
-  const body = { contents, generationConfig:{ maxOutputTokens: maxTokens, temperature: 0.4 } };
   let lastErr = '';
 
   for(const modelName of [...new Set(MODELS_TO_TRY)]) {
-    // Use streaming endpoint so text appears word by word
     const useStream = !!onChunk;
-    const endpoint = useStream ? 'streamGenerateContent?alt=sse' : 'generateContent';
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:${endpoint}&key=${GEMINI_KEY}`;
+    const url = '/api/chat';
 
     try {
       const _ac = new AbortController();
@@ -5298,7 +5354,7 @@ async function callAI(systemPrompt, messages, maxTokens=1000, onChunk=null){
         res = await fetch(url, {
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body: JSON.stringify(body),
+          body: JSON.stringify({ model: modelName, contents, maxTokens, stream: useStream }),
           signal: _ac.signal
         });
       } finally { clearTimeout(_acTimer); }
